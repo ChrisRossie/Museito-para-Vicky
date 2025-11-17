@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Museito para Vicky</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Playfair+Display:wght@700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Reset y variables */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --vino: #722F37;
+            --blanco: #ffffff;
+            --negro: #1a1a1a;
+            --gris: #f5f5f5;
+            --sombra: rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--blanco);
+            color: var(--negro);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            touch-action: pan-y;
+            user-select: none;
+        }
+        /* Columnas laterales */
+        .columna { position: fixed; top: 0; width: 80px; height: 100vh;
+                   background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(245,245,245,0.9)),
+                               repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+                   z-index: 1; box-shadow: 2px 0 10px rgba(0,0,0,0.05); }
+        .columna-izquierda { left:0; }
+        .columna-derecha { right:0; }
+        .detalle-marmol { position: fixed; bottom:0; left:0; width:100%; height:20px;
+                           background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(245,245,245,0.9)),
+                                       repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+                           z-index:1; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        /* Header */
+        .header-museo { text-align:center; padding:20px 0; position:relative; z-index:20;
+                        border-bottom:1px solid rgba(0,0,0,0.1); margin-bottom:25px; }
+        .titulo-museo { font-family:'Playfair Display', serif; font-size:2.8rem; color:var(--vino);
+                        margin-bottom:8px; letter-spacing:2px; font-weight:700; display:inline-block; position:relative; }
+        .titulo-museo::after { content:""; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
+                               width:100px; height:2px; background:var(--vino); }
+        .subtitulo-museo { font-size:1.1rem; color:var(--negro); opacity:0.7; max-width:90%;
+                           margin:15px auto 0; line-height:1.5; font-style:italic; letter-spacing:0.5px; }
+        /* Sala */
+        .sala-container { background:var(--blanco); border-radius:4px; box-shadow:0 5px 25px var(--sombra);
+                          overflow:hidden; position:relative; min-height:70vh; margin:25px 0; display:flex; flex-direction:column;
+                          border:1px solid rgba(0,0,0,0.05); transition: all 0.7s ease-in-out; transform:scale(0.98); opacity:0; }
+        .sala-container.active { opacity:1; transform:scale(1); }
+        .fondo-arte { position:absolute; top:0; left:0; width:100%; height:100%; background-size:cover;
+                      background-position:center; opacity:0.1; z-index:1; transition:opacity 1.2s ease; filter:grayscale(100%) brightness(120%); }
+        .contenido-sala { position:relative; z-index:2; padding:25px 20px; flex-grow:1; display:flex; flex-direction:column; }
+        .texto-historia { font-size:1.25rem; line-height:1.7; text-align:center; margin:auto 0; padding:20px 0;
+                          color:var(--negro); animation:aparecer 1.2s ease forwards; opacity:0; transform:translateY(15px); }
+        @keyframes aparecer { to { opacity:1; transform:translateY(0); } }
+        .texto-historia h2 { color:var(--vino); font-family:'Playfair Display', serif; margin-bottom:20px; font-size:2rem; font-weight:700; position:relative; display:inline-block; padding-bottom:10px; }
+        .texto-historia h2::after { content:""; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:60px; height:2px; background:var(--vino); }
+        .texto-historia p { margin-bottom:20px; text-align:left; }
+        .info-obra { background:rgba(114,47,55,0.05); color:var(--negro); padding:15px; border-radius:4px; margin-top:20px; font-size:0.9rem;
+                     border-left:3px solid var(--vino); animation:aparecer 0.8s 0.4s ease forwards; opacity:0; }
+        .titulo-obra { font-family:'Playfair Display', serif; font-size:1.2rem; color:var(--vino); margin-bottom:5px; font-weight:700; }
+        .navegacion { display:flex; justify-content:space-between; margin-top:25px; gap:15px; }
+        .btn-nav { background:var(--blanco); color:var(--vino); border:1px solid var(--vino); padding:14px 20px; font-size:1.1rem;
+                   font-family:'Playfair Display', serif; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+                   transition:all 0.3s ease; box-shadow:0 2px 5px var(--sombra); z-index:10; flex:1; position:relative; overflow:hidden; font-weight:600; letter-spacing:0.5px; }
+        .btn-nav::after { content:""; position:absolute; top:0; left:0; width:100%; height:100%; background:var(--vino); transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
+        .btn-nav:hover { color:var(--blanco); }
+        .btn-nav:hover::after { transform:translateX(0); }
+        .btn-nav:active { transform:scale(0.98); }
+        .btn-nav:disabled { background:var(--gris); cursor:not-allowed; transform:none; box-shadow:none; color:#999; border-color:#ccc; }
+        .btn-nav:disabled::after { display:none; }
+        .contador { text-align:center; font-size:1rem; color:var(--negro); margin:15px 0; opacity:0.8; z-index:10; font-weight:600; letter-spacing:1px; }
+        .barra-progreso { height:4px; background:rgba(0,0,0,0.1); border-radius:2px; margin:15px 0; overflow:hidden; z-index:10; }
+        .progreso-lleno { height:100%; background:var(--vino); width:0%; transition:width 0.7s ease; border-radius:2px; position:relative; }
+        .progreso-lleno::after { content:""; position:absolute; top:0; left:0; width:20px; height:100%; background:rgba(255,255,255,0.4); transform:translateX(-100%) skewX(-20deg); animation:progresoBrillo 2s infinite; }
+        @keyframes progresoBrillo { 100% { transform:translateX(300px) skewX(-20deg); } }
+        .controles-musica { position:absolute; top:20px; right:100px; display:flex; gap:10px; z-index:30; }
+        .btn-musica { width:40px; height:40px; border-radius:50%; background:var(--blanco); border:1px solid var(--vino); color:var(--vino);
+                      display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.3s ease; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+        .btn-musica:hover { background:var(--vino); color:var(--blanco); transform:scale(1.1); }
+        .btn-musica:active { transform:scale(0.95); }
+        .mensaje-final { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8);
+                         display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:100;
+                         opacity:0; pointer-events:none; transition:opacity 1s ease; }
+        .mensaje-final.visible { opacity:1; pointer-events:all; }
+        .mensaje-contenido { background:white; padding:40px; border-radius:4px; max-width:90%; width:500px; text-align:center;
+                             position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:scale(0.9); animation:mensajeAparecer 0.8s 0.3s ease forwards; border:1px solid rgba(0,0,0,0.1); }
+        @keyframes mensajeAparecer { to { transform:scale(1); } }
+        .mensaje-contenido h2 { font-family:'Playfair Display', serif; color:var(--vino); margin-bottom:20px; font-size:2.2rem; }
+        .mensaje-contenido p { font-size:1.2rem; line-height:1.6; margin-bottom:25px; color:var(--negro); }
+        .btn-cerrar-mensaje { background:var(--vino); color:white; border:none; padding:12px 30px; font-size:1.1rem; border-radius:4px; cursor:pointer; transition:all 0.3s ease; font-family:'Playfair Display', serif; font-weight:600; }
+        .btn-cerrar-mensaje:hover { background:#5a252b; transform:translateY(-2px); box-shadow:0 5px 10px rgba(114,47,55,0.3); }
+        
+        /* Poema completo */
+        .poema-completo {
+            background: var(--blanco);
+            border-radius: 4px;
+            padding: 25px;
+            max-height: 75vh;
+            overflow-y: auto;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: left;
+            color: var(--negro);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            animation: aparecer 1s ease forwards;
+            opacity: 0;
+        }
+        .poema-completo h3 {
+            color: var(--vino);
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+            font-weight: 700;
+        }
+        .poema-completo h3::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: var(--vino);
+        }
+        .poema-completo p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        .poema-completo p:last-child {
+            margin-top: 25px;
+            font-weight: 600;
+            text-align: center;
+            color: var(--vino);
+            font-style: italic;
+        }
+        
+        /* Media queries simplificadas para móviles */
+        @media(max-width:768px){ 
+            .titulo-museo{font-size:2.3rem} 
+            .subtitulo-museo{font-size:1rem} 
+            .texto-historia{font-size:1.1rem;padding:15px 0} 
+            .texto-historia h2{font-size:1.8rem} 
+            .info-obra{font-size:0.85rem;padding:12px} 
+            .titulo-obra{font-size:1.1rem} 
+            .btn-nav{padding:12px 15px;font-size:1rem} 
+            .contenido-sala{padding:20px 15px} 
+            .sala-container{min-height:65vh} 
+            .controles-musica{right:60px} 
+            .poema-completo { padding: 20px 15px; }
+            .poema-completo h3 { font-size: 1.6rem; }
+        }
+        @media(max-width:480px){ 
+            .titulo-museo{font-size:2rem} 
+            .navegacion{flex-direction:column;gap:10px} 
+            .btn-nav{width:100%} 
+            .contador{margin:10px 0} 
+            .columna{width:20px} 
+            .controles-musica{right:40px} 
+        }
+    </style>
+</head>
+<body>
+    <!-- Columnas laterales y detalle marmol -->
+    <div class="columna columna-izquierda"></div>
+    <div class="columna columna-derecha"></div>
+    <div class="detalle-marmol"></div>
+
+    <div id="museo-container">
+        <!-- Header -->
+        <div class="header-museo">
+            <h1 class="titulo-museo">Museito para Vicky</h1>
+            <p class="subtitulo-museo">Una experiencia creada especialmente para ti</p>
+        </div>
+
+        <!-- Sala principal -->
+        <div class="sala-container active">
+            <div class="fondo-arte" id="fondo-arte"></div>
+            <div class="contenido-sala">
+                <div class="texto-historia" id="texto-historia"></div>
+                <div class="barra-progreso"><div class="progreso-lleno" id="progreso"></div></div>
+                <div class="contador" id="contador">Sala 1 de 9</div>
+                <div class="navegacion">
+                    <button id="btn-atras" class="btn-nav" disabled>« Atrás</button>
+                    <button id="btn-adelante" class="btn-nav">Siguiente »</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de música -->
+    <div class="controles-musica">
+        <button id="btn-play" class="btn-musica"><i class="fas fa-play"></i></button>
+        <button id="btn-pause" class="btn-musica"><i class="fas fa-pause"></i></button>
+    </div>
+
+    <!-- Mensaje final -->
+    <div class="mensaje-final" id="mensaje-final">
+        <div class="mensaje-contenido">
+            <h2>¡Gracias por visitar el museito!</h2>
+            <p>Espero que hayas disfrutado de este recorrido por nuestro pequeño museo del corazón. Cada sala fue creada con mucho cariño para ti.</p>
+            <p>Recuerda que siempre estaré aquí para caminar contigo, cuidar tus sueños y admirar la obra de arte que eres.</p>
+            <button class="btn-cerrar-mensaje" id="btn-cerrar-mensaje">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // Array de salas con todos los textos y pinturas integrados
+        const passages = [
+            {
+                text: `<h2>Para Vicky</h2>
+                       <p>Hay algo en tu regreso que trastoca la rutina,</p>
+                       <p>como un viento que entra por la ventana sin permiso</p>
+                       <p>y me obliga a recordar que aún hay vida que vale la pena.</p>`,
+                image: "imagenes/persistence_of_memory.jpg",
+                title: "La Persistencia de la Memoria",
+                artist: "Salvador Dalí",
+                year: "1931",
+                info: "La irrupción de lo inesperado en la rutina, como el regreso de alguien que altera el tiempo y los hábitos. Los relojes derretidos evocan la distorsión de la percepción ante algo que nos conmueve."
+            },
+            {
+                text: `<p>Me descubro sonriendo con tus palabras,</p>
+                       <p>como si fueran faros en la noche de mis dudas,</p>
+                       <p>y tus cambios —ese crecer silencioso—</p>
+                       <p>me recuerdan que las personas pueden reinventarse</p>
+                       <p>y aun así dejar que otros las reconozcan.</p>`,
+                image: "imagenes/the_kiss.jpg",
+                title: "El Beso",
+                artist: "Gustav Klimt",
+                year: "1907-1908",
+                info: "La conexión íntima y profunda que se siente a través de la cercanía emocional. La obra transmite cómo un gesto, una palabra, puede envolvernos y transformarnos."
+            },
+            {
+                text: `<p>Te pienso en el silencio, cuando no hay nada que decir,</p>
+                       <p>y aun así siento tu cercanía,</p>
+                       <p>como si hubieras tejido un hilo invisible</p>
+                       <p>que conecta mis pensamientos con los tuyos.</p>`,
+                image: "imagenes/nighthawks.jpg",
+                title: "Nighthawks (Cafetería de noche)",
+                artist: "Edward Hopper",
+                year: "1942",
+                info: "El silencio compartido y la presencia de alguien cercano se sienten aún en la ausencia de palabras. Hopper captura la intimidad y la conexión en la quietud de la noche."
+            },
+            {
+                text: `<p>Gracias por permitirme estar, una y otra vez,</p>
+                       <p>por dejar que mis torpezas no borren lo que sentimos,</p>
+                       <p>por enseñarme que el afecto verdadero</p>
+                       <p>no necesita perfección, solo presencia.</p>`,
+                image: "imagenes/las_meninas.jpg",
+                title: "Las Meninas",
+                artist: "Diego Velázquez",
+                year: "1656",
+                info: "La aceptación y reconocimiento mutuo. La interacción compleja entre observador y observado refleja cómo se construyen los vínculos de confianza y presencia en la vida cotidiana."
+            },
+            {
+                text: `<p>Te quiero mucho, más allá de lo que alcanza mi voz,</p>
+                       <p>más allá de cualquier lógica que intente contenerlo.</p>
+                       <p>Me gustas, me enamoras todavía,</p>
+                       <p>y no hay nada que pueda hacer</p>
+                       <p>para que esa certeza se desvanezca.</p>`,
+                image: "imagenes/woman_in_blue.jpg",
+                title: "La Mujer de Azul",
+                artist: "Pablo Picasso",
+                year: "1901",
+                info: "El amor que se expresa silencioso pero profundo, casi introspectivo, con la fuerza emocional y la vulnerabilidad que Picasso transmite en sus figuras azules."
+            },
+            {
+                text: `<p>A veces te imagino en los detalles pequeños:</p>
+                       <p>en cómo tu mirada se detiene en algo mínimo,</p>
+                       <p>en cómo tu risa se cuela en mis recuerdos,</p>
+                       <p>en cómo el simple hecho de existir cerca de mí</p>
+                       <p>cambia la forma en que veo la vida.</p>`,
+                image: "imagenes/interior_mujer_espaldas.jpg",
+                title: "Interior con Mujer de Espaldas",
+                artist: "Edgar Degas",
+                year: "1885",
+                info: "La atención a los gestos mínimos y cotidianos que definen la presencia de alguien en nuestra vida. Degas captura momentos íntimos con delicadeza y observación minuciosa."
+            },
+            {
+                text: `<p>Y pienso: aunque mis palabras sean solo eco de lo que siento,</p>
+                       <p>aunque el tiempo nos lleve a otros lugares,</p>
+                       <p>algo en mí seguirá recordando este regreso,</p>
+                       <p>esta presencia tuya que me toca profundo,</p>`,
+                image: "imagenes/old_guitarist.jpg",
+                title: "El Viejo Guitarrista",
+                artist: "Pablo Picasso",
+                year: "1903-1904",
+                info: "La melancolía y la reflexión profunda sobre la propia vulnerabilidad. La obra evoca cómo los sentimientos internos resuenan más allá de lo que podemos comunicar."
+            },
+            {
+                text: `<p>y este amor silencioso que late sin pedir nada,</p>
+                       <p>solo agradecido por ser posible.</p>`,
+                image: "imagenes/amor_psique.jpg",
+                title: "Amor y Psique",
+                artist: "William-Adolphe Bouguereau",
+                year: "1889",
+                info: "La entrega pura y la belleza de un afecto que existe sin condiciones ni expectativas. La pintura refleja la quietud y perfección de un amor contemplativo y agradecido."
+            },
+            {
+                text: `<div class="poema-completo">
+                         <h3>Poema Completo</h3>
+                         <p>Hay algo en tu regreso que trastoca la rutina,</p>
+                         <p>como un viento que entra por la ventana sin permiso</p>
+                         <p>y me obliga a recordar que aún hay vida que vale la pena.</p>
+                         
+                         <p>Me descubro sonriendo con tus palabras,</p>
+                         <p>como si fueran faros en la noche de mis dudas,</p>
+                         <p>y tus cambios —ese crecer silencioso—</p>
+                         <p>me recuerdan que las personas pueden reinventarse</p>
+                         <p>y aun así dejar que otros las reconozcan.</p>
+                         
+                         <p>Te pienso en el silencio, cuando no hay nada que decir,</p>
+                         <p>y aun así siento tu cercanía,</p>
+                         <p>como si hubieras tejido un hilo invisible</p>
+                         <p>que conecta mis pensamientos con los tuyos.</p>
+                         
+                         <p>Hay algo en tu risa que hace que todo lo demás se desvanezca,</p>
+                         <p>como si el mundo entero fuera secundario frente a ti.</p>
+                  

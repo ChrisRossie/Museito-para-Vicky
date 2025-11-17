@@ -303,7 +303,7 @@
                 info: "La entrega pura y la belleza de un afecto que existe sin condiciones ni expectativas. La pintura refleja la quietud y perfección de un amor contemplativo y agradecido."
             },
             {
-                text: `<div class="poema-completo">
+                text:                 text: `<div class="poema-completo">
                          <h3>Poema Completo</h3>
                          <p>Hay algo en tu regreso que trastoca la rutina,</p>
                          <p>como un viento que entra por la ventana sin permiso</p>
@@ -322,4 +322,128 @@
                          
                          <p>Hay algo en tu risa que hace que todo lo demás se desvanezca,</p>
                          <p>como si el mundo entero fuera secundario frente a ti.</p>
-                  
+                         
+                         <p>Gracias por permitirme estar, una y otra vez,</p>
+                         <p>por dejar que mis torpezas no borren lo que sentimos,</p>
+                         <p>por enseñarme que el afecto verdadero</p>
+                         <p>no necesita perfección, solo presencia.</p>
+                         
+                         <p>Te quiero mucho, más allá de lo que alcanza mi voz,</p>
+                         <p>más allá de cualquier lógica que intente contenerlo.</p>
+                         <p>Me gustas, me enamoras todavía,</p>
+                         <p>y no hay nada que pueda hacer</p>
+                         <p>para que esa certeza se desvanezca.</p>
+                         
+                         <p>A veces te imagino en los detalles pequeños:</p>
+                         <p>en cómo tu mirada se detiene en algo mínimo,</p>
+                         <p>en cómo tu risa se cuela en mis recuerdos,</p>
+                         <p>en cómo el simple hecho de existir cerca de mí</p>
+                         <p>cambia la forma en que veo la vida.</p>
+                         
+                         <p>Y pienso: aunque mis palabras sean solo eco de lo que siento,</p>
+                         <p>aunque el tiempo nos lleve a otros lugares,</p>
+                         <p>algo en mí seguirá recordando este regreso,</p>
+                         <p>esta presencia tuya que me toca profundo,</p>
+                         <p>y este amor silencioso que late sin pedir nada,</p>
+                         <p>solo agradecido por ser posible.</p>
+                         
+                         <p>Con todo mi cariño, para siempre</p>
+                       </div>`,
+                image: "imagenes/amor_psique.jpg",
+                title: "Poema Completo",
+                artist: "Para Vicky",
+                year: "2023",
+                info: "La expresión completa de un sentimiento que trasciende el tiempo y el espacio, agradecido por su simple existencia."
+            }
+        ];
+
+        let currentIndex = 0;
+        const fondo = document.getElementById("fondo-arte");
+        const textoHistoria = document.getElementById("texto-historia");
+        const progreso = document.getElementById("progreso");
+        const contador = document.getElementById("contador");
+        const btnAtras = document.getElementById("btn-atras");
+        const btnAdelante = document.getElementById("btn-adelante");
+        const mensajeFinal = document.getElementById("mensaje-final");
+        const btnCerrar = document.getElementById("btn-cerrar-mensaje");
+        const btnPlay = document.getElementById("btn-play");
+        const btnPause = document.getElementById("btn-pause");
+
+        function updateSala() {
+            const sala = passages[currentIndex];
+            textoHistoria.innerHTML = sala.text;
+            fondo.style.backgroundImage = `url('${sala.image}')`;
+            progreso.style.width = `${((currentIndex+1)/passages.length)*100}%`;
+            contador.textContent = `Sala ${currentIndex+1} de ${passages.length}`;
+            btnAtras.disabled = currentIndex === 0;
+            
+            // Cambiar texto del botón adelante si es la última sala
+            if(currentIndex === passages.length-1) {
+                btnAdelante.textContent = "Finalizar";
+            } else {
+                btnAdelante.textContent = "Siguiente »";
+            }
+            
+            // Mostrar mensaje final si es la última sala
+            if(currentIndex === passages.length-1) { 
+                mensajeFinal.classList.add('visible'); 
+            }
+        }
+
+        btnAtras.addEventListener("click", () => { 
+            if (currentIndex > 0) {
+                currentIndex--; 
+                updateSala(); 
+            }
+        });
+        
+        btnAdelante.addEventListener("click", () => { 
+            if (currentIndex < passages.length-1) {
+                currentIndex++; 
+                updateSala(); 
+            } else {
+                mensajeFinal.classList.add('visible');
+            }
+        });
+        
+        btnCerrar.addEventListener("click", () => { 
+            mensajeFinal.classList.remove('visible'); 
+            currentIndex = 0;
+            updateSala();
+        });
+
+        // Música
+        const musica = new Audio('musica/musica.mp3');
+        musica.loop = true;
+        
+        btnPlay.addEventListener("click", () => {
+            musica.play();
+            btnPlay.style.display = 'none';
+            btnPause.style.display = 'flex';
+        });
+        
+        btnPause.addEventListener("click", () => {
+            musica.pause();
+            btnPlay.style.display = 'flex';
+            btnPause.style.display = 'none';
+        });
+        
+        // Inicialmente ocultar el botón de pausa
+        btnPause.style.display = 'none';
+
+        // Inicializar primera sala
+        updateSala();
+        
+        // Navegación por teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                currentIndex--;
+                updateSala();
+            } else if (e.key === 'ArrowRight' && currentIndex < passages.length-1) {
+                currentIndex++;
+                updateSala();
+            }
+        });
+    </script>
+</body>
+</html>

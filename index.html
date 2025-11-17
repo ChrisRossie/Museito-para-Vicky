@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -32,6 +32,69 @@
             touch-action: pan-y;
             user-select: none;
             line-height: 1.6;
+        }
+        
+        /* Pantalla de bienvenida */
+        .pantalla-bienvenida {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--blanco);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .pantalla-bienvenida h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--vino);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .pantalla-bienvenida p {
+            font-size: 1.3rem;
+            color: var(--negro);
+            margin-bottom: 40px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .btn-entrar {
+            background: var(--vino);
+            color: var(--blanco);
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.3rem;
+            font-family: 'Playfair Display', serif;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3);
+        }
+        
+        .btn-entrar:hover {
+            background: #5a252b;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(114, 47, 55, 0.4);
+        }
+        
+        .btn-entrar:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Ocultar contenido principal inicialmente */
+        #contenido-principal {
+            display: none;
         }
         
         /* Columnas laterales */
@@ -191,10 +254,10 @@
         }
         
         .texto-historia p { 
-            margin-bottom:20px; 
-            text-align:left; 
+            margin-bottom:15px; 
+            text-align:center; 
             font-size: 1.2rem;
-            line-height: 1.8;
+            line-height: 1.7;
         }
         
         .info-obra { 
@@ -207,6 +270,18 @@
             border-left:3px solid var(--vino); 
             animation:aparecer 0.8s 0.4s ease forwards; 
             opacity:0; 
+            text-align: center;
+        }
+        
+        .imagen-pintura {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin: 0 auto 15px;
+            display: block;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 2px solid var(--vino);
         }
         
         .titulo-obra { 
@@ -448,7 +523,7 @@
             max-height: 75vh;
             overflow-y: auto;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            text-align: left;
+            text-align: center;
             color: var(--negro);
             border: 1px solid rgba(0, 0, 0, 0.05);
             animation: aparecer 1s ease forwards;
@@ -481,6 +556,7 @@
             margin-bottom: 15px;
             line-height: 1.8;
             font-size: 1.1rem;
+            text-align: center;
         }
         
         .poema-completo p:last-child {
@@ -493,6 +569,8 @@
         
         /* Media queries simplificadas para móviles */
         @media(max-width:768px){ 
+            .pantalla-bienvenida h1 { font-size: 2.5rem; }
+            .pantalla-bienvenida p { font-size: 1.1rem; }
             .titulo-museo{font-size:2.3rem} 
             .subtitulo-museo{font-size:1rem} 
             .texto-historia{font-size:1.1rem;padding:15px 0} 
@@ -507,62 +585,86 @@
             .poema-completo { padding: 20px 15px; }
             .poema-completo h3 { font-size: 1.6rem; }
             .poema-completo p { font-size: 1rem; }
+            .imagen-pintura {
+                max-width: 250px;
+            }
         }
         
         @media(max-width:480px){ 
+            .pantalla-bienvenida h1 { font-size: 2rem; }
+            .pantalla-bienvenida p { font-size: 1rem; }
+            .btn-entrar { padding: 14px 30px; font-size: 1.1rem; }
             .titulo-museo{font-size:2rem} 
             .navegacion{flex-direction:column;gap:10px} 
             .btn-nav{width:100%} 
             .contador{margin:10px 0} 
             .columna{width:20px} 
             .controles-musica{right:40px} 
+            .imagen-pintura {
+                max-width: 200px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Columnas laterales y detalle marmol -->
-    <div class="columna columna-izquierda"></div>
-    <div class="columna columna-derecha"></div>
-    <div class="detalle-marmol"></div>
+    <!-- Pantalla de bienvenida -->
+    <div class="pantalla-bienvenida" id="pantalla-bienvenida">
+        <h1>Museito para Vicky</h1>
+        <p>Bienvenida a este Museo, único para ti.<br>Presiona el botón para poder entrar</p>
+        <button class="btn-entrar" id="btn-entrar">Entrar al Museo</button>
+    </div>
 
-    <div id="museo-container">
-        <!-- Header -->
-        <div class="header-museo">
-            <h1 class="titulo-museo">Museito para Vicky</h1>
-            <p class="subtitulo-museo">Una experiencia creada especialmente para ti</p>
-        </div>
+    <!-- Contenido principal (inicialmente oculto) -->
+    <div id="contenido-principal">
+        <!-- Columnas laterales y detalle marmol -->
+        <div class="columna columna-izquierda"></div>
+        <div class="columna columna-derecha"></div>
+        <div class="detalle-marmol"></div>
 
-        <!-- Sala principal -->
-        <div class="sala-container active">
-            <div class="fondo-arte" id="fondo-arte"></div>
-            <div class="contenido-sala">
-                <div class="texto-historia" id="texto-historia"></div>
-                <div class="barra-progreso"><div class="progreso-lleno" id="progreso"></div></div>
-                <div class="contador" id="contador">Sala 1 de 9</div>
-                <div class="navegacion">
-                    <button id="btn-atras" class="btn-nav" disabled>« Atrás</button>
-                    <button id="btn-adelante" class="btn-nav">Siguiente »</button>
+        <div id="museo-container">
+            <!-- Header -->
+            <div class="header-museo">
+                <h1 class="titulo-museo">Museito para Vicky</h1>
+                <p class="subtitulo-museo">Una experiencia creada especialmente para ti</p>
+            </div>
+
+            <!-- Sala principal -->
+            <div class="sala-container active">
+                <div class="fondo-arte" id="fondo-arte"></div>
+                <div class="contenido-sala">
+                    <div class="texto-historia" id="texto-historia"></div>
+                    <div class="barra-progreso"><div class="progreso-lleno" id="progreso"></div></div>
+                    <div class="contador" id="contador">Sala 1 de 9</div>
+                    <div class="navegacion">
+                        <button id="btn-atras" class="btn-nav" disabled>« Atrás</button>
+                        <button id="btn-adelante" class="btn-nav">Siguiente »</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Controles de música -->
-    <div class="controles-musica">
-        <button id="btn-play" class="btn-musica"><i class="fas fa-play"></i></button>
-        <button id="btn-pause" class="btn-musica"><i class="fas fa-pause"></i></button>
-    </div>
+        <!-- Controles de música -->
+        <div class="controles-musica">
+            <button id="btn-play" class="btn-musica"><i class="fas fa-play"></i></button>
+            <button id="btn-pause" class="btn-musica"><i class="fas fa-pause"></i></button>
+        </div>
 
-    <!-- Mensaje final -->
-    <div class="mensaje-final" id="mensaje-final">
-        <div class="mensaje-contenido">
-            <h2>¡Gracias por visitar el museito!</h2>
-            <p>Espero que hayas disfrutado de este recorrido por nuestro pequeño museo del corazón. Cada sala fue creada con mucho cariño para ti.</p>
-            <p>Recuerda que siempre estaré aquí para caminar contigo, cuidar tus sueños y admirar la obra de arte que eres.</p>
-            <button class="btn-cerrar-mensaje" id="btn-cerrar-mensaje">Cerrar</button>
+<!-- Mensaje final -->
+        <div class="mensaje-final" id="mensaje-final">
+            <div class="mensaje-contenido">
+                <h2>¡Gracias por visitar el museito!</h2>
+                <p>Espero que hayas disfrutado de este recorrido por nuestro pequeño museo del corazón. Cada sala fue creada con mucho cariño para ti.</p>
+                <p>Recuerda que siempre estaré aquí para caminar contigo, cuidar tus sueños y admirar la obra de arte que eres.</p>
+                <button class="btn-cerrar-mensaje" id="btn-cerrar-mensaje">Cerrar</button>
+            </div>
         </div>
     </div>
         <script>
+        // Elementos de la pantalla de bienvenida
+        const pantallaBienvenida = document.getElementById("pantalla-bienvenida");
+        const btnEntrar = document.getElementById("btn-entrar");
+        const contenidoPrincipal = document.getElementById("contenido-principal");
+        
         // Array de salas con todos los textos y pinturas integrados
         const passages = [
             {
@@ -722,6 +824,30 @@
         const btnPause = document.getElementById("btn-pause");
         const salaContainer = document.querySelector(".sala-container");
 
+        // Música
+        const musica = new Audio('musica.mp3');
+        musica.loop = true;
+        
+        // Función para entrar al museo
+        btnEntrar.addEventListener("click", () => {
+            // Reproducir música
+            musica.play().catch(e => {
+                console.log("Error al reproducir música:", e);
+            });
+            
+            // Ocultar pantalla de bienvenida con animación
+            pantallaBienvenida.style.opacity = "0";
+            pantallaBienvenida.style.transition = "opacity 1s ease";
+            
+            setTimeout(() => {
+                pantallaBienvenida.style.display = "none";
+                contenidoPrincipal.style.display = "block";
+                
+                // Inicializar primera sala
+                updateSala();
+            }, 1000);
+        });
+
         function updateSala() {
             const sala = passages[currentIndex];
             
@@ -729,6 +855,7 @@
             salaContainer.classList.remove("active");
             
             setTimeout(() => {
+                // Primero establecer el texto base
                 textoHistoria.innerHTML = sala.text;
                 fondo.style.backgroundImage = `url('${sala.image}')`;
                 progreso.style.width = `${((currentIndex+1)/passages.length)*100}%`;
@@ -740,6 +867,17 @@
                     btnAdelante.textContent = "Finalizar";
                 } else {
                     btnAdelante.textContent = "Siguiente »";
+                    
+                    // AGREGAR LA INFORMACIÓN DE LA PINTURA CON IMAGEN
+                    // Solo para las salas 1-8, no para la última (poema completo)
+                    textoHistoria.innerHTML += `
+                        <div class="info-obra">
+                            <img src="${sala.image}" alt="${sala.title}" class="imagen-pintura">
+                            <div class="titulo-obra">${sala.title}</div>
+                            <div><strong>${sala.artist}</strong>, ${sala.year}</div>
+                            <div><em>${sala.info}</em></div>
+                        </div>
+                    `;
                 }
                 
                 salaContainer.classList.add("active");
@@ -767,10 +905,6 @@
             currentIndex = 0;
             updateSala();
         });
-
-        // Música
-        const musica = new Audio('musica.mp3');
-        musica.loop = true;
         
         btnPlay.addEventListener("click", () => {
             musica.play().catch(e => {
@@ -788,9 +922,6 @@
         
         // Inicialmente ocultar el botón de pausa
         btnPause.style.display = 'none';
-
-        // Inicializar primera sala
-        updateSala();
         
         // Navegación por teclado
         document.addEventListener('keydown', (e) => {
